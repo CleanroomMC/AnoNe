@@ -1,12 +1,11 @@
-package zone.rong.anone;
+package com.cleanroommc.anone;
 
-import zone.rong.anone.value.SingletonInstance;
+import com.cleanroommc.anone.value.SingletonInstance;
 
 import java.lang.annotation.*;
 
 /**
  * Marks the type as a Singleton.
- *
  * This would mean that the annotated class is intended to have only one instance of itself in memory during runtime.
  *
  * @see SingletonInstance

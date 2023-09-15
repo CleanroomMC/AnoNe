@@ -1,3 +1,3 @@
-## あのね *Ano ne*
+## あのね *AnoNe*
 
 Yet another annotation library.
