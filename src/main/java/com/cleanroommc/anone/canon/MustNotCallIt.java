@@ -16,24 +16,30 @@ import java.lang.annotation.*;
  * <p><br>
  * <b>Example</b>
  * <pre>{@code
- * class A {
+ * class A
+ * {
  *     @MustNotCallIt(scopeRoot = { B.class })
  *     public static final void internalMethod() { }
  * }
  *
- * abstract class B {
+ * abstract class B
+ * {
  *     abstract void method1();
  *     abstract void method2();
  * }
  *
- * class C extends B {
+ * class C extends B
+ * {
  *     @Override
- *     void method1() {
- *         // must not call A#internalMethod
+ *     void method1()
+ *     {
+ *         // must not call A#internalMethod at CallPosition.HEAD
  *     }
+ *
  *     @Override
- *     void method2() {
- *         // must not call A#internalMethod
+ *     void method2()
+ *     {
+ *         // must not call A#internalMethod at CallPosition.HEAD
  *     }
  * }
  * }
@@ -53,18 +59,18 @@ public @interface MustNotCallIt {
      *
      * @see CallPosition
      */
-    CallPosition position() default CallPosition.UNRESTRICTED;
+    CallPosition position() default CallPosition.HEAD;
 
     /**
      * Scope in which this contract is enforced.
      * This is applied to every {@link #scopeRoot()} class.
      * <p>
      * When it applies to {@link Super}, the target remains only on the annotated method.
-     * As a result, only the overriders of the annotated method are forced to follow the contract of {@link MustNotCallIt}.
+     * As a result, only the overriders of the annotated method are required to follow the contract of {@link MustNotCallIt}.
      * <p>
      * When it applies to other classes, the target extends to all its declared methods since
      * there's no option provided to specify a method signature.
-     * As a result, overriders of all the declared methods are forced to follow the contract of {@link MustNotCallIt}.
+     * As a result, overriders of all the declared methods are required to follow the contract of {@link MustNotCallIt}.
      *
      * @see #scopeRoot()
      * @see CallScope

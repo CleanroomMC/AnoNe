@@ -16,24 +16,30 @@ import java.lang.annotation.*;
  * <p><br>
  * <b>Example</b>
  * <pre>{@code
- * class A {
+ * class A
+ * {
  *     @MustCallIt(scopeRoot = { B.class })
  *     public static final void checkPreconditions(B b) { }
  * }
  *
- * abstract class B {
+ * abstract class B
+ * {
  *     abstract void method1();
  *     abstract void method2();
  * }
  *
- * class C extends B {
+ * class C extends B
+ * {
  *     @Override
- *     void method1() {
- *         A.checkPreconditions(this); // must call
+ *     void method1()
+ *     {
+ *         A.checkPreconditions(this); // must call at CallPosition.HEAD
  *     }
+ *
  *     @Override
- *     void method2() {
- *         A.checkPreconditions(this); // must call
+ *     void method2()
+ *     {
+ *         A.checkPreconditions(this); // must call at CallPosition.HEAD
  *     }
  * }
  * }
@@ -53,18 +59,18 @@ public @interface MustCallIt {
      *
      * @see CallPosition
      */
-    CallPosition position() default CallPosition.UNRESTRICTED;
+    CallPosition position() default CallPosition.HEAD;
 
     /**
      * Scope in which this contract is enforced.
      * This is applied to every {@link #scopeRoot()} class.
      * <p>
      * When it applies to {@link Super}, the target remains only on the annotated method.
-     * As a result, only the overriders of the annotated method are forced to follow the contract of {@link MustCallIt}.
+     * As a result, only the overriders of the annotated method are required to follow the contract of {@link MustCallIt}.
      * <p>
      * When it applies to other classes, the target extends to all its declared methods since
      * there's no option provided to specify a method signature.
-     * As a result, overriders of all the declared methods are forced to follow the contract of {@link MustCallIt}.
+     * As a result, overriders of all the declared methods are required to follow the contract of {@link MustCallIt}.
      *
      * @see #scopeRoot()
      * @see CallScope
