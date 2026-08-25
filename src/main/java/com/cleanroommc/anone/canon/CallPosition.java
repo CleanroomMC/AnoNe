@@ -1,8 +1,8 @@
 package com.cleanroommc.anone.canon;
 
 /**
- * @see MustCallIt
- * @see MustNotCallIt
+ * @see MustCallAt
+ * @see MustNotCallAt
  *
  * @since 1.0.0
  */
@@ -122,5 +122,5 @@ public enum CallPosition {
      * }
      * </code></pre>
      */
-    TAIL,
+    IN_FINALLY,
 }

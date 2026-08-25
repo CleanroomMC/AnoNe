@@ -3,23 +3,23 @@ package com.cleanroommc.anone.canon;
 import java.lang.annotation.*;
 
 /**
- * It specifies which callers are forbidden from calling the annotated method.
+ * It specifies which methods are required to call the annotated method.
  * <p>
  * With the default parameters, this annotation applies to all the overriders of
  * the annotated method, including all the inheritance hierarchies,
- * which behaves similarly to <code>Must Not Call Super</code>.
+ * which behaves similarly to <code>Must Call Super</code>.
  *
  * <hr>
  *
- * However, this is different from a <code>Must Not Call Super</code> annotation,
+ * However, this is different from a <code>Must Call Super</code> annotation,
  * and it's capable of applying to arbitrary method inheritance hierarchies.
  * <p><br>
  * <b>Example</b>
  * <pre>{@code
  * class A
  * {
- *     @MustNotCallIt(scopeRoot = { B.class })
- *     public static final void internalMethod() { }
+ *     @MustCallAt(scopeRoot = { B.class })
+ *     public static final void checkPreconditions(B b) { }
  * }
  *
  * abstract class B
@@ -33,29 +33,29 @@ import java.lang.annotation.*;
  *     @Override
  *     void method1()
  *     {
- *         // must not call A#internalMethod at CallPosition.HEAD
+ *         A.checkPreconditions(this); // must call at CallPosition.HEAD
  *     }
  *
  *     @Override
  *     void method2()
  *     {
- *         // must not call A#internalMethod at CallPosition.HEAD
+ *         A.checkPreconditions(this); // must call at CallPosition.HEAD
  *     }
  * }
  * }
  * </pre>
  *
- * @see MustCallIt
+ * @see MustNotCallAt
  *
  * @since 1.0.0
  */
 @Documented
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.CLASS)
-public @interface MustNotCallIt {
+public @interface MustCallAt {
 
     /**
-     * Forbidden call position.
+     * Required call position.
      *
      * @see CallPosition
      */
@@ -66,11 +66,11 @@ public @interface MustNotCallIt {
      * This is applied to every {@link #scopeRoot()} class.
      * <p>
      * When it applies to {@link Super}, the target remains only on the annotated method.
-     * As a result, only the overriders of the annotated method are required to follow the contract of {@link MustNotCallIt}.
+     * As a result, only the overriders of the annotated method are required to follow the contract of {@link MustCallAt}.
      * <p>
      * When it applies to other classes, the target extends to all its declared methods since
      * there's no option provided to specify a method signature.
-     * As a result, overriders of all the declared methods are required to follow the contract of {@link MustNotCallIt}.
+     * As a result, overriders of all the declared methods are required to follow the contract of {@link MustCallAt}.
      *
      * @see #scopeRoot()
      * @see CallScope
