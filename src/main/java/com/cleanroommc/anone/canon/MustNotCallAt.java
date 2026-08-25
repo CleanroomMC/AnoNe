@@ -7,11 +7,11 @@ import java.lang.annotation.*;
  * <p>
  * With the default parameters, this annotation applies to all the overriders of
  * the annotated method, including all the inheritance hierarchies,
- * which behaves similarly to <code>Must Not Call Super</code>.
+ * which behaves similarly to <code>MustNotCallSuper</code>.
  *
  * <hr>
  *
- * However, this is different from a <code>Must Not Call Super</code> annotation,
+ * However, this is different from a <code>MustNotCallSuper</code> annotation,
  * and it's capable of applying to arbitrary method inheritance hierarchies.
  * <p><br>
  * <b>Example</b>
@@ -63,14 +63,15 @@ public @interface MustNotCallAt {
 
     /**
      * Scope in which this contract is enforced.
-     * This is applied to every {@link #scopeRoot()} class.
+     * This is applied to every class specified by {@link #scopeRoot()}.
      * <p>
      * When it applies to {@link Super}, the target remains only on the annotated method.
-     * As a result, only the overriders of the annotated method are required to follow the contract of {@link MustNotCallAt}.
+     * As a result, only overriders of the annotated method are required to follow the contract of {@link MustCallAt}.
      * <p>
-     * When it applies to other classes, the target extends to all its declared methods since
-     * there's no option provided to specify a method signature.
-     * As a result, overriders of all the declared methods are required to follow the contract of {@link MustNotCallAt}.
+     * When it applies to other classes, the target is extended to their inheritors.
+     * All overrides of methods declared by the specified class become targets,
+     * since there's no option provided to specify a method signature.
+     * As a result, those overrides are required to follow the contract of {@link MustCallAt}.
      *
      * @see #scopeRoot()
      * @see CallScope
@@ -78,7 +79,7 @@ public @interface MustNotCallAt {
     CallScope scope() default CallScope.TRANSITIVE_OVERRIDERS;
 
     /**
-     * It specifies where to start counting overriders.
+     * Specifies the classes from which overriders start being counted.
      *
      * @see #scope()
      * @see Super
