@@ -66,12 +66,12 @@ public @interface MustNotCallAt {
      * This is applied to every class specified by {@link #scopeRoot()}.
      * <p>
      * When it applies to {@link Super}, the target remains only on the annotated method.
-     * As a result, only overriders of the annotated method are required to follow the contract of {@link MustCallAt}.
+     * As a result, only overriders of the annotated method are required to follow the contract of {@link MustNotCallAt}.
      * <p>
      * When it applies to other classes, the target is extended to their inheritors.
      * All overrides of methods declared by the specified class become targets,
      * since there's no option provided to specify a method signature.
-     * As a result, those overrides are required to follow the contract of {@link MustCallAt}.
+     * As a result, those overrides are required to follow the contract of {@link MustNotCallAt}.
      *
      * @see #scopeRoot()
      * @see CallScope
