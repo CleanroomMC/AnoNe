@@ -7,6 +7,8 @@ import java.lang.annotation.*;
  * This would mean that the annotated type would error or produce no effect
  * when any mutator methods such as {@link java.util.Collection#add(Object)} is called.
  * This annotation doesn't ensure the complete immutability as the object may still be able to be mutated in a different context.
+ * <p>
+ * It has weaker semantics than {@link Immutable}.
  *
  * @see Immutable
  *
