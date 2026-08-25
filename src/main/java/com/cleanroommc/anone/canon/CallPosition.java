@@ -123,4 +123,6 @@ public enum CallPosition {
      * </code></pre>
      */
     IN_FINALLY,
+
+    ANYWHERE
 }

@@ -18,7 +18,7 @@ import java.lang.annotation.*;
  * <pre>{@code
  * class A
  * {
- *     @MustNotCallAt(scopeRoot = { B.class })
+ *     @MustNotCallAt(position = CallPosition.ANYWHERE, scopeRoot = { B.class })
  *     public static final void internalMethod() { }
  * }
  *
@@ -33,13 +33,13 @@ import java.lang.annotation.*;
  *     @Override
  *     void method1()
  *     {
- *         // must not call A#internalMethod at CallPosition.HEAD
+ *         // must not call A#internalMethod
  *     }
  *
  *     @Override
  *     void method2()
  *     {
- *         // must not call A#internalMethod at CallPosition.HEAD
+ *         // must not call A#internalMethod
  *     }
  * }
  * }
