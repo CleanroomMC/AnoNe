@@ -4,9 +4,6 @@ plugins {
 
 group 'com.cleanroommc'
 version '1.0.0'
-base {
-    archivesName.set('AnoNe')
-}
 
 repositories {
     mavenCentral()
