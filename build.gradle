@@ -1,12 +1,22 @@
 plugins {
+    id 'com.cleanroommc.versioning' version '2.0.0'
     id 'java'
+    id 'maven-publish'
 }
 
-group 'com.cleanroommc'
-version '1.0.0'
+group = providers.gradleProperty('group').get()
+base.archivesName = 'anone'
 
 repositories {
     mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+    withSourcesJar()
+    withJavadocJar()
 }
 
 dependencies {
@@ -18,4 +28,34 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifactId = 'anone'
+            from components.java
+            pom {
+                name = 'AnoNe'
+                description = 'Yet another annotation library.'
+                url = 'https://github.com/CleanroomMC/AnoNe'
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = 'Cleanroom'
+            url = 'https://maven.cleanroommc.com'
+            credentials(PasswordCredentials)
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+    }
 }

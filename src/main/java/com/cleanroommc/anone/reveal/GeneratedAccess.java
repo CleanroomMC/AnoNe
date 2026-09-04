@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2022-2026 CleanroomMC contributors
+ * SPDX-License-Identifier: MIT
+ */
+
 package com.cleanroommc.anone.reveal;
 
 import java.lang.annotation.*;
