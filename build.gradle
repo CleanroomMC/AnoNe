@@ -25,6 +25,11 @@ tasks.named('compileJava') {
     options.compilerArgs << '-Xlint:-options'
 }
 
+tasks.named('compileTestJava', JavaCompile) { task ->
+    task.sourceCompatibility = '25'
+    task.targetCompatibility = '25'
+}
+
 dependencies {
     testImplementation platform('org.junit:junit-bom:6.0.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
