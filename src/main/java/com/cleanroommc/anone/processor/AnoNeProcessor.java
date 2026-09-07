@@ -17,7 +17,6 @@ import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
@@ -27,7 +26,6 @@ import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 import java.util.Set;
 
-@SupportedSourceVersion(SourceVersion.RELEASE_8)
 @SupportedAnnotationTypes({ "com.cleanroommc.anone.canon.OverrideOnly", "com.cleanroommc.anone.canon.InvokeOnly" })
 public class AnoNeProcessor extends AbstractProcessor {
 
@@ -35,6 +33,11 @@ public class AnoNeProcessor extends AbstractProcessor {
     private static final String OVERRIDE_ONLY_MESSAGE = "invoked %s::%s annotated with @OverrideOnly. This method is intended to be overridden only and not invoked.";
 
     private Trees trees;
+
+    @Override
+    public SourceVersion getSupportedSourceVersion() {
+        return SourceVersion.latestSupported();
+    }
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {

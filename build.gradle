@@ -12,11 +12,17 @@ repositories {
 }
 
 java {
+    sourceCompatibility = "1.8"
+    targetCompatibility = "1.8"
     toolchain {
         languageVersion = JavaLanguageVersion.of(25)
     }
     withSourcesJar()
     withJavadocJar()
+}
+
+tasks.named('compileJava') {
+    options.compilerArgs << '-Xlint:-options'
 }
 
 dependencies {
