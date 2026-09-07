@@ -64,4 +64,79 @@ public class AnoNeProcessorTest {
         assertThat(compilation).failed();
     }
 
+    @Test
+    void mustNotCloseReturnValue() {
+        var assets = forSourceString("com.cleanroommc.anone.processor.Assets",
+                """
+                package com.cleanroommc.anone.processor;
+                
+                import com.cleanroommc.anone.lifecycle.MustNotClose;
+                
+                import java.io.InputStream;
+                
+                public class Assets {
+                    private InputStream shared;
+                    
+                    @MustNotClose
+                    public InputStream stream() {
+                        return this.shared;
+                    }
+                    
+                    public void release() throws Exception {
+                        this.stream().close();
+                    }
+                }
+                """);
+
+        var compilation = javac().withProcessors(new AnoNeProcessor()).compile(assets);
+
+        assertThat(compilation).hadErrorContaining("@MustNotClose");
+    }
+
+    @Test
+    void mustNotCloseParameterInTryWithResources() {
+        var borrower = forSourceString("com.cleanroommc.anone.processor.Borrower",
+                """
+                package com.cleanroommc.anone.processor;
+                
+                import com.cleanroommc.anone.lifecycle.MustNotClose;
+                
+                import java.io.InputStream;
+                
+                public class Borrower {
+                    public void read(@MustNotClose InputStream in) throws Exception {
+                        try (InputStream resource = in) {
+                            resource.read();
+                        }
+                    }
+                }
+                """);
+
+        var compilation = javac().withProcessors(new AnoNeProcessor()).compile(borrower);
+
+        assertThat(compilation).hadErrorContaining("@MustNotClose");
+    }
+
+    @Test
+    void mustNotCloseAllowsPlainUsage() {
+        var borrower = forSourceString("com.cleanroommc.anone.processor.PlainBorrower",
+                """
+                package com.cleanroommc.anone.processor;
+                
+                import com.cleanroommc.anone.lifecycle.MustNotClose;
+                
+                import java.io.InputStream;
+                
+                public class PlainBorrower {
+                    public int read(@MustNotClose InputStream in) throws Exception {
+                        return in.read();
+                    }
+                }
+                """);
+
+        var compilation = javac().withProcessors(new AnoNeProcessor()).compile(borrower);
+
+        assertThat(compilation).succeeded();
+    }
+
 }

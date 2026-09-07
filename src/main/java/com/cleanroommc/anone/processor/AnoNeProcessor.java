@@ -7,8 +7,13 @@ package com.cleanroommc.anone.processor;
 
 import com.cleanroommc.anone.canon.InvokeOnly;
 import com.cleanroommc.anone.canon.OverrideOnly;
+import com.cleanroommc.anone.lifecycle.MustNotClose;
+import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.MethodTree;
+import com.sun.source.tree.Tree;
+import com.sun.source.tree.TryTree;
+import com.sun.source.tree.VariableTree;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.TreePathScanner;
 import com.sun.source.util.Trees;
@@ -26,11 +31,12 @@ import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 import java.util.Set;
 
-@SupportedAnnotationTypes({ "com.cleanroommc.anone.canon.OverrideOnly", "com.cleanroommc.anone.canon.InvokeOnly" })
+@SupportedAnnotationTypes("*")
 public class AnoNeProcessor extends AbstractProcessor {
 
     private static final String INVOKE_ONLY_MESSAGE = "overrides method from %s::%s annotated with @InvokeOnly. This method is intended to be invoked only and not overridden.";
     private static final String OVERRIDE_ONLY_MESSAGE = "invoked %s::%s annotated with @OverrideOnly. This method is intended to be overridden only and not invoked.";
+    private static final String MUST_NOT_CLOSE_MESSAGE = "closed %s annotated with @MustNotClose. This resource is owned elsewhere and must not be closed here.";
 
     private Trees trees;
 
@@ -129,6 +135,9 @@ public class AnoNeProcessor extends AbstractProcessor {
             Element element = trees.getElement(currentPath);
             if (element instanceof ExecutableElement) {
                 ExecutableElement method = (ExecutableElement) element;
+                if (this.isClose(method) && node.getMethodSelect() instanceof MemberSelectTree) {
+                    this.checkNotClosed(((MemberSelectTree) node.getMethodSelect()).getExpression());
+                }
                 OverrideOnly usage = method.getAnnotation(OverrideOnly.class);
                 if (usage != null) {
                     if (!node.getMethodSelect().toString().startsWith("super.")) {
@@ -149,6 +158,33 @@ public class AnoNeProcessor extends AbstractProcessor {
                 }
             }
             return super.visitMethodInvocation(node, unused);
+        }
+
+        @Override
+        public Void visitTry(TryTree node, Void unused) {
+            for (Tree resource : node.getResources()) {
+                Tree value = resource instanceof VariableTree ? ((VariableTree) resource).getInitializer() : resource;
+                if (value != null) {
+                    this.checkNotClosed(value);
+                }
+            }
+            return super.visitTry(node, unused);
+        }
+
+        private boolean isClose(ExecutableElement method) {
+            return method.getParameters().isEmpty() && method.getSimpleName().contentEquals("close");
+        }
+
+        private void checkNotClosed(Tree value) {
+            TreePath path = TreePath.getPath(this.getCurrentPath(), value);
+            if (path == null) {
+                return;
+            }
+            Element element = trees.getElement(path);
+            if (element != null && element.getAnnotation(MustNotClose.class) != null) {
+                trees.printMessage(Diagnostic.Kind.ERROR, String.format(MUST_NOT_CLOSE_MESSAGE, element),
+                        path.getLeaf(), path.getCompilationUnit());
+            }
         }
 
     }
