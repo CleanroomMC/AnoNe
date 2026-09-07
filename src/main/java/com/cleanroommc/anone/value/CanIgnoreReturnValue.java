@@ -15,11 +15,10 @@ import java.lang.annotation.*;
  * be ignored by callers.
  * <p>
  * Method-level annotations take precedence over class-level annotations.
- * For example, method-level {@link CanIgnoreReturnValue} overrides class-level {@link CheckReturnValue}.
+ * For example, method-level {@link CanIgnoreReturnValue} overrides class-level
+ * {@code org.jetbrains.annotations.CheckReturnValue}.
  * <p>
  * This annotation targets callers rather than implementations.
- *
- * @see CheckReturnValue
  *
  * @since 1.0.0
  */
